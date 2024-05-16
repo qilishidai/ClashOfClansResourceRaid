@@ -1,0 +1,19 @@
+root
+   |---examples: 调用op的例子目录
+   |---include: libop的头文件目录
+   |---lib: op相关库目录
+	|---x86: 32位库目录
+	|---x64: 64位库目录
+   |---tess_model: tesseract Ocr引擎模型文件，此文件必须和op_x86放在一起，否则插件无法导入模型
+   |---paddle: paddle Ocr引擎模型文件，此文件必须和op_x64放在一起，否则插件无法导入模型
+   |---tool: optool的二进制目录
+   |---_pyop.pyd: python二进制库（默认64位)
+   |---_pyop_x86.pyd: python二进制库（32位)
+   |---install.bat: 安装op-com组件到系统，需要管理员权限
+   |---uninstall.bat: 卸载系统的op-com组件
+   |---history.txt: op的更新历史
+   |---op_x86.dll: 32位的op插件
+   |---op_x64.dll: 64位的op插件
+   |---pyop.py: pyop接口，python import此接口
+   |---tools86.dll: 32位的免注册帮助库,examples/freecom.py介绍了使用方式
+   |---tools.dll: 64位的免注册帮助库

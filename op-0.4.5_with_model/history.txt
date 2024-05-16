@@ -1,0 +1,244 @@
+
+
+## 0.4.5.0 版本更新
+
+**新增功能**
+
+* 支持 keypad normal.hd 模式
+* 支持 display normal.gxgi 和 normal.wgc 模式
+* 后台绑定支持 d3d12 模式
+* Ocr引擎支持 paddleocr，32 位默认使用 tesseract，64 位默认使用 paddleocr
+* 新增 SetClipboard、GetClipboard 接口
+* 新增 Delay、Delays、GetBindWindow、IsBind、SetMouseDelay、SetKeypadDelay 接口
+
+**问题修复**
+
+* 修复 WaitKey 无法正常工作的 bug
+* 修复 RunApp 报错找不到路径的问题
+* 修复 AStarFindPath 的调用结果不正确或内存访问报错
+* 修复 GetWindowClass 返回值不正确问题
+* 修复 ScreenToClient 及 ClientToScreen 坐标转换不正确问题
+* 修复 FindColorBlock 查找色块与截图区域一致时不会进行比对的问题
+* 修复 com 免注册通过 CoGetClassObject 获取不到 IClassFactory 的问题
+* 修复 moveR 接口 MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE 导致 3d 视角引擎里面坐标位置异常问题
+* 修复 Windows 模式下的鼠标滚轮消息发送问题
+
+**其他更改**
+
+* OcrWrapper 改为单例模式以减少内存占用
+* FindColorBlock 接口调用结果为未找到时，返回 0 而不是 -1
+* KeyPressStr 接口使用 VkKeyScanW 将字符转换为当前键盘上相应的虚拟键代码和移位状态
+* 移除 qttool 代码（后续不再维护），可使用此 [项目](https://github.com/flaot/OPTestTool) 代替
+
+**致谢**
+
+感谢 float、up1021 和 zhuizhubf等开发者提交的代码;感谢千年提供的wiki文档
+
+## 0.4.2.0版本更新说明
+亲爱的oper，感谢你一直以来对我们软件op插件的支持和信任.以下是本次更新的主要内容：
+
+### 1. 新的功能
+- 新增了SetScreenDataMode接口，可通过此接口设置屏幕数据模式，0:从上到下(默认),1:从下到上。
+- 引入了google的tesseract ocr引擎，在无字库下自动使用。具体影响的接口如下：
+  - Ocr
+  - OcrEx
+  - OcrAuto
+  - OcrFromFile
+  - OcrAutoFromFile
+  - FindStr
+  - FindStrEx
+若当前op对象已经设置了字库，可通过调用UseDict将其切换至空的字库，即可切换为tesseract ocr引擎。
+
+### 2. 问题修复
+- 修复了64位插件GetScreenData接口返回值截断问题。
+- 修复了FindColor返回值不准确问题。
+- 修复了GetScreenDatabmp图像相反的问题。
+
+### 3. 更改
+- opEx更名为pyop，这是一个专为python3.10设计的扩展接口。
+- SetPath接口添加了错误提示信息。
+- 返回指针的接口更改为返回size_t类型，以保证和pyop接口兼容。
+- GetId接口更改为返回一个递增的数字，代表进程中创建的op对象数量。
+
+### 4. 提高
+- FindColor等接口添加了搜索方向的支持。
+
+## 总结与展望
+本次更新，为oper带来了一些新的功能和优化。希望大家能喜欢并享受这些改进。
+也期待听到各位对op插件的反馈和建议，让op插件能够不断地改进和完善。在未来的版本中，还计划实现以下功能：
+- 支持更多的图像匹配方式。
+- 支持更多的OCR引擎。
+
+如有任何问题或意见，请随时联系。感谢对op插件的支持和信任。
+
+
+# 0.4.0.0
+## 1. 新接口
+	1). MatchPicName
+	2). FindPicExS
+	3). FindColorBlock
+	4). FindColorBlockEx
+	5). GetResultCount
+	6). GetResultPos
+	7) .FindNearestPos
+	8). SetMemDict:设置内存字库
+	9). loadPic和freePic
+	10).LoadMemPic:加载内存图片
+## 2. 问题修复
+	1). 修改接口GetScreenData
+	2). 修复一定条件下dx截图花屏问题
+	3). 后台display添加opengl.fi模式，用于部分较老窗口
+	4). 修复GetCurosorPos的一个bug
+	5). 修复GetColor在一些条件下无法正确获取颜色的问题
+	6). 修复FindColor返回值问题
+	7). 修复FindStr等接口返回值问题
+	8). 修复一些情况下找图较慢的问题
+	9). 修复FindMultiColor由于坐标越界引起的崩溃问题
+## 3. 更改
+	1). ocr二值化方式调整(由rgb-->binary变为rgb-->gray-->binary),偏色将会作用于gray-->binary阶段
+## 4. 提高
+	1). FindPic和FindPicEx使用多线程计算,提高cpu利用率
+	2). tool工具添加绑定窗口显示
+
+## 5. 总结
+	随着时间的推移，op插件已经逐渐完善，这个过程离不开大家的细心测试和反馈，非常感谢大家对op插件提出宝贵的建议！另外也很感谢
+群友笑傲浆糊提供的pr(8,9和10接口).
+0.3.9.0
+1.修复读取大漠字库时文本较长引起阶段的问题
+3.修复问题21&22，即FindPicEx的返回值问题
+4.修复模拟器解绑崩溃问题
+5.movto等函数返回值修改
+6.FindMultiColor问题修复
+7.GetWindow参数7修改
+8.GetScreenData以及GetScreenDataBmp返回值修改（像素起点：屏幕左上角-->屏幕左下角）
+9.修复绑定失败时引起程序崩溃的问题
+10.错误提示增加调用堆栈信息
+0.3.8.0 
+1.SetShowErrorMsg接口添加参数3:输出到标准输出
+0.3.7.0
+1.修复部分按键函数无效问题
+2.修复重复绑定失败问题
+3.部分代码重构
+4.添加GetLastError接口
+5.添加GetID接口
+6.opTool增加上上下左右移动一个像素得功能
+7.opTool修复
+8.去除绑定窗口的错误弹窗
+9.opTool添加代码高亮等功能
+10.其他bug修复
+0.3.6.0
+1.提高在2k屏幕下前台的截图速度
+2.ocr更新
+  2.1 Ocr参数支持背景色
+  2.2 点阵大小由32*32增加为255*255
+  2.3字库版本由0升级为1，更新了存储格式，字库文件大小为之前的1/4
+  2.4新的ocr接口和工具兼容旧的的字库，但旧的不支持新的。
+  2.5 tool工具ocr同步更新
+3.重写op com 接口
+4.tool工具tool 界面调整（自动保存，提示等，布局优化）
+5.修复GetColor,FindColor等接口有时候无效问题
+6.将normal和gdi模式绑定的区域更改为窗口的客户区域（之前是窗口区域），与鼠标坐标保持一致
+7.修复FindStr和FindStrEx接口在部分词组下无法返回有效内容的问题
+8.修复getcmdstr卡住问题
+9.修复LeftClick接口阻塞问题
+
+0.3.5.0
+1.[new]提高找图速度
+2.[new]添加SetDisplayInput接口，设定图色的获取方式
+3.[new]重写ocr算法，大幅度提高ocr的速度以及准确性(大字库性能提高20倍以上）
+4.[new]添加接口GetScreeData和GetScreeDataBmp
+5.[fix]修复ocr工具点阵提取问题
+6.[new]提高截图速度，大约提升200ms左右
+7.[fix]模糊ocr
+8.[fix]修复tool工具无法保存图像问题
+9.[fix]修复tool工具打开字库无法保存问题
+10.[new]tool工具添加整体点阵提取
+11.[new]tool工具抓图改善
+12.[fix]修复GetColor返回值错误问题
+0.3.4.0
+1.添加EnableDisplayDebug和CapturePre接口,可进行图像调试
+2.修复libop部分接口无法返回有效值的问题
+3.修复FindPic的匹配函数错误问题
+4.重写透明图查找算法，大幅提高透明图速度
+5.修复24位透明图无法进行正常匹配问题
+6.修复读取DM字库，点阵等信息不正确问题
+7.修复IN_RANGE在部分条件下无效问题
+8.修复OCR的字符切割不正确问题
+9.重写OPTOOL工具,现在optool工具将会与插件一起打包
+0.3.3.0
+1.后台绑定添加 opengl.es 模式，支持逍遥模拟器绑定
+2.修复GetCmdStr速度较慢问题
+3.添加默认前台绑定，同时所有gdi模式改为触发式截图，减少资源占用
+4.修复前台截图失败问题
+5.修复部分ocr接口引起程序崩溃问题
+6.修复findpic接口引起程序崩溃问题
+7.添加普通dll调用支持，现在插件支持静态编译(c++)
+8.修复64位编译失败问题
+9.修复屏幕分辨率超过1920*1080时绑定出错问题
+0.3.1.0
+1.窗口绑定接口增加以下参数：
+	"dx" : dx模式,等同于dx.d3d9
+
+	"dx.d3d9" dx模式，使用d3d9渲染
+
+	"dx.d3d10" dx模式，使用d3d10渲染
+
+	"dx.d3d11" dx模式，使用d3d11渲染
+
+	"opengl" opengl模式，使用opengl渲染的窗口，支持最新版雷电模拟器，以及夜神6.1，支持最小化窗口截图
+
+	"opengl.std" opengl模式，使用标准opengl渲染的窗口
+
+	"opengl.nox" opengl模式，针对最新夜神模拟器的渲染方式
+2.修复FindPic接口返回值问题
+3.dx的部分模式改为内存映射获取像素，增强兼容性
+4.修复Capture接口保存图片文件位置不正确问题
+5.支持32位插件对64位进程的绑定，64位插件对32位进程的绑定
+
+
+0.2.4.0
+1.[new]tool工具添加系统字库生成
+2.[new]SetDict接口支持大漠的字库了，tool工具同样支持打开和测试大漠字库
+3.[new]去除对boost库的依赖，现在编译插件无需安装boost库
+4.[fix]OcrAuto接口改为背景识别，与tool工具的背景识别对应（注意，与旧版本不兼容）
+5.[fix]修复部分绑定方式返回值不正确的问题
+6.[fix]修复插件与窗口进程位数不一致时崩溃的问题(例如32位插件绑定64位进程的窗口)
+7.[fix]修复SetDict接口返回值错误问题
+
+0.2.3.2
+1.[fix]修复tool在选色时程序崩溃问题
+2.[fix]修复setdict接口调用失败的问题
+0.2.3.1
+1.[new]添加KeyPressChar，KeyPress接口
+2.[fix]KeyDown、KeyDownChar、KeyUp、KeyUpChar无效
+0.2.3.0
+1.[new]添加RunApp接口
+2.[new]添加WinExec接口
+3.[new]添加GetCmdStr接口
+4.[fix]文档错误修复
+5.[fix]错误提示改为中文
+6.[fix]修复GetMousePointWindow无效问题
+7.[fix]修复一个可能导致堆栈溢出的bug
+8.[fix]修复坐标错误偏移的问题
+
+
+0.2.2.0更新
+1.添加A星寻路算法AStarFindPath接口
+2.添加op_test工具，可进行绑定测试以及脚本测试(lua语法)
+3.修复SendString等接口返回值问题
+4.修复Tool抓图颜色失真问题
+5.FindPic,FindPicEx性能优化(速度提高大约1倍)
+6.修复Capture函数崩溃问题
+7.添加EnablePicCache接口
+0.2.1.3
+1.修复坐标超出窗口范围时截图失败问题
+2.添加SetShowErrorMsg接口
+3.修复GetCursorPos无法工作的bug
+4.tool工具添加抓图功能，类似QQ截图
+5.删除一些测试日志输出
+
+
+2019.2.5
+1.修复Capture参数无效问题
+2.修复Ocr 参数sim<1时识别准确度太低问题
+3.更新Tool和op_x86
