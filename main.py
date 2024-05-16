@@ -1,20 +1,10 @@
-import random  # 随机数生成模块
-import winreg  # Windows注册表操作模块
-import cv2  # OpenCV图像处理库
-# Windows COM对象操作模块
-from win32com.client import Dispatch  # import moudles 第一次运行python -m pip install pywin32
-import time  # 时间模块
-# Windows动态链接库调用模块
 import ctypes
-from ctypes import *
-# 子进程管理模块
-import subprocess  # 系统命令
-import os  # 操作系统相关功能模块
-from 配置文件 import *
+import win32com.client
+# from win32com.client import Dispatch  # import moudles 第一次运行python -m pip install pywin32
 
 from 升级 import 升级建筑
-
 from 常用函数 import *
+from 配置文件 import *
 
 # LD = ctypes.windll.LoadLibrary
 # # 参数自己设置成FreeCom.dll的路径
@@ -31,8 +21,7 @@ from 常用函数 import *
 # 调用免注册dll中的setupA函数注册opdll
 是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
 #创建op对象
-op = Dispatch("op.opsoft")
-
+op = win32com.client.Dispatch("op.opsoft")
 
 # 进攻完毕次数 = 0
 # 循环最大等待秒数 = 30
@@ -52,6 +41,17 @@ op = Dispatch("op.opsoft")
 # 部落冲突包名="com.tencent.tmgp.supercell.clashofclans"
 # # 部落冲突包名=""com.supercell.clashofclans"#国际服
 # # 升级判断最低金币=0
+
+
+进攻完毕次数 = 0
+找不到夜世界船的次数 = 0
+开始执行脚本时间 = time.time()
+当前金币 = -1
+当前圣水 = -1
+最大金币存储量 = 4700000
+最大圣水存储量 = 5100000
+刷墙成功次数 = 0
+
 
 def 点击(x, y, 延时=300):
     op.MoveTo(x, y)
@@ -84,7 +84,8 @@ while True:  #循环进攻
                 shell=True)
 
             while True:  # 循环判断模拟器是否启动成功
-                模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',stdout=subprocess.PIPE)
+                模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',
+                                            stdout=subprocess.PIPE)
                 雷电模拟器运行信息 = 将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
 
                 if 雷电模拟器运行信息[1]["绑定窗口句柄"] == 0:
