@@ -10,21 +10,29 @@ from ctypes import *
 # 子进程管理模块
 import subprocess  # 系统命令
 import os  # 操作系统相关功能模块
+from 配置文件 import *
 
 from 升级 import 升级建筑
 
-from 配置文件 import *
-
 from 常用函数 import *
 
-LD = ctypes.windll.LoadLibrary
-# 参数自己设置成FreeCom.dll的路径
-freeCOM = LD(R"op-0.4.5_with_model/tools.dll")
-# 参数自己设置成op_x86.dll的路径
-ret = freeCOM.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
-print("setupA:{}".format(ret))
-# create op instance
+# LD = ctypes.windll.LoadLibrary
+# # 参数自己设置成FreeCom.dll的路径
+# freeCOM = LD(R"op-0.4.5_with_model/tools.dll")
+# # 参数自己设置成op_x86.dll的路径
+# ret = freeCOM.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
+# print("setupA:{}".format(ret))
+# # create op instance
+# op = Dispatch("op.opsoft")
+
+
+#加载注册com组件的dll
+免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
+# 调用免注册dll中的setupA函数注册opdll
+是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
+#创建op对象
 op = Dispatch("op.opsoft")
+
 
 # 进攻完毕次数 = 0
 # 循环最大等待秒数 = 30
@@ -57,7 +65,9 @@ def 随机点击(x, y):
     op.Delay(100)
 
 
+正常结束上一轮打鱼而进入新一轮打鱼 = False  # 用于判断是否跳过前面的开模拟器,开游戏等操作,该变量会在循环超时,一直找不到夜世界船关闭游戏是置为False
 while True:  #循环进攻
+
     if 一直执行 is False:
         if time.time() - 开始执行脚本时间 > 需要执行多少秒:
             关闭游戏("到时间了")
@@ -67,7 +77,6 @@ while True:  #循环进攻
         模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk', stdout=subprocess.PIPE)
         雷电模拟器运行信息 = 将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
 
-
         if 雷电模拟器运行信息[1]["绑定窗口句柄"] == 0:
             #启动模拟器并打开游戏
             subprocess.run(
@@ -75,8 +84,7 @@ while True:  #循环进攻
                 shell=True)
 
             while True:  # 循环判断模拟器是否启动成功
-                模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',
-                                            stdout=subprocess.PIPE)
+                模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',stdout=subprocess.PIPE)
                 雷电模拟器运行信息 = 将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
 
                 if 雷电模拟器运行信息[1]["绑定窗口句柄"] == 0:
@@ -91,8 +99,6 @@ while True:  #循环进攻
             subprocess.run(
                 雷电模拟器安装目录 + "ldconsole.exe runapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
                 shell=True)
-
-
 
         #为绑定窗口则绑定窗口
         if op.IsBind() == 0:
@@ -155,10 +161,10 @@ while True:  #循环进攻
 
             # print(f"当前的金币为{识别的列表[0][2]},圣水为{识别的列表[1][2]}")
 
-                当前金币 = int(识别的列表[0][2])
-                当前圣水 = int(识别的列表[1][2])
-            # except:
-            #     print("本次识别金币,圣水出错,当前未更新金币圣水,将打印上一次识别的结果或默认值")
+            当前金币 = int(识别的列表[0][2])
+            当前圣水 = int(识别的列表[1][2])
+        # except:
+        #     print("本次识别金币,圣水出错,当前未更新金币圣水,将打印上一次识别的结果或默认值")
 
         else:
             print(f"当前的金币为{识别的列表[1][2]},圣水为{识别的列表[0][2]}")
@@ -206,7 +212,7 @@ while True:  #循环进攻
                 升级建筑物致命错误次数 += 1
 
             if "升级了" in 升级信息:
-                刷墙成功次数+=1
+                刷墙成功次数 += 1
                 continue
             else:
                 #刷墙完毕,或者不能刷墙退出升级建筑判断,等待一下,因为有时候游戏没反应过来,到时出兵失败
@@ -217,7 +223,6 @@ while True:  #循环进攻
     点击(58, 536, 700)
     #点击立即寻找
     点击(600, 380)
-
 
     # 判断循环是否进入战斗界面
     循环开始时间 = time.time()
