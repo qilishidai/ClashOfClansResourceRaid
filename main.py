@@ -11,7 +11,7 @@ from 配置文件 import *
 # freeCOM = LD(R"op-0.4.5_with_model/tools.dll")
 # # 参数自己设置成op_x86.dll的路径
 # ret = freeCOM.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
-# print("setupA:{}".format(ret))
+# print("setupA:{}".format(ret))j
 # # create op instance
 # op = Dispatch("op.opsoft")
 
@@ -43,6 +43,7 @@ op = win32com.client.Dispatch("op.opsoft")
 # # 升级判断最低金币=0
 
 
+# 这是一些初始化信息，通常无需用户配置，故不写在配置文件
 进攻完毕次数 = 0
 找不到夜世界船的次数 = 0
 开始执行脚本时间 = time.time()
@@ -159,19 +160,12 @@ while True:  #循环进攻
 
     try:
         if int(识别的列表[0][1]) < int(识别的列表[1][1]):
-
-            # print(f"当前的金币为{识别的列表[0][2]},圣水为{识别的列表[1][2]}")
-
             当前金币 = int(识别的列表[0][2])
             当前圣水 = int(识别的列表[1][2])
-        # except:
-        #     print("本次识别金币,圣水出错,当前未更新金币圣水,将打印上一次识别的结果或默认值")
-
         else:
+            当前金币 = int(识别的列表[1][2])
+            当前圣水 = int(识别的列表[0][2])
             print(f"当前的金币为{识别的列表[1][2]},圣水为{识别的列表[0][2]}")
-            # try:
-            #     当前金币 = int(识别的列表[1][2])
-            #     当前圣水 = int(识别的列表[0][2])
     except:
         print("本次识别金币,圣水出错,当前未更新金币圣水,将打印上一次识别的结果或默认值")
 
@@ -201,6 +195,12 @@ while True:  #循环进攻
 
     # 必须升级建筑物在找夜世界船后面,因为升级建筑会去第二世界,导致找不到船
     while 进攻完毕次数 % 5 == 0:
+        if 当前圣水<3700000:
+            print("留3700000圣水升级兵,不刷墙了")
+            break
+        if 是否开启刷墙 is False:
+            print("刷墙已关闭,跳过刷墙")
+            break
 
         if 升级建筑物致命错误次数 > 10:
             print("多次升级建筑失败,本次运行跳过升级建筑")

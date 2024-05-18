@@ -8,8 +8,7 @@ import winreg
 循环最大等待秒数 = 30
 需要执行多少秒 = 4 * 3600  # 4个小时
 一直执行 = True
-
-
+是否开启刷墙=True
 
 # 注册表路径
 key = winreg.HKEY_CURRENT_USER
