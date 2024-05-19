@@ -208,12 +208,4 @@ def 取直线上的随机点(传入4条直线, 对应直线x取值范围, 选择
 
 
 
-def 关闭游戏(原因=None):
-    subprocess.run(
-        雷电模拟器安装目录 + "ldconsole.exe killapp  --index "+雷电模拟器索引+" --packagename \""+部落冲突包名+"\"",
-        shell=True)
-    time.sleep(1)
-
-    if 原因 is not None:
-        print(原因)
 
