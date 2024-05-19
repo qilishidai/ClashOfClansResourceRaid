@@ -66,6 +66,15 @@ def 随机点击(x, y):
     op.Delay(100)
 
 
+def 关闭游戏(原因=None):
+    subprocess.run(
+        雷电模拟器安装目录 + "ldconsole.exe killapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
+        shell=True)
+    time.sleep(1)
+
+    if 原因 is not None:
+        print(原因)
+
 正常结束上一轮打鱼而进入新一轮打鱼 = False  # 用于判断是否跳过前面的开模拟器,开游戏等操作,该变量会在循环超时,一直找不到夜世界船关闭游戏是置为False
 while True:  #循环进攻
 
