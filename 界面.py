@@ -149,6 +149,7 @@ class 界面程序(Frame):
 def 关闭窗口():
     print("用户点击了关闭按钮")
     sys.exit()
+    exi
     # 这里可以添加你想要的关闭操作
 
 根窗口 = Tk()

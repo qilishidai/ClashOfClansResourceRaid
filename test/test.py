@@ -1,80 +1,84 @@
-from tkinter import *
+import tkinter as tk
 
 
-class 界面程序(Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack(fill=BOTH, expand=True)
-        self.创建窗口()
+class ConfigGUI(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("配置界面")
 
-    def 创建窗口(self):
-        self.菜单栏 = Menu(self.master)
-        self.菜单栏.add_command(label="启动", command=self.启动脚本)
-        self.菜单栏.add_command(label="停止", command=self.停止脚本)
+        # 雷电模拟器索引
+        self.label1 = tk.Label(self, text="雷电模拟器索引:")
+        self.label1.grid(row=0, column=0)
+        self.entry1 = tk.Entry(self)
+        self.entry1.grid(row=0, column=1)
 
-        # 更多子菜单,并添加相关选项
-        self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
-        self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
-        self.更多子菜单.add_command(label="显示模拟器", command=self.显示模拟器)
-        self.更多子菜单.add_separator()  # 添加分割线
-        self.更多子菜单.add_command(label="禁止操作模拟器", command=self.禁止操作模拟器)
-        self.更多子菜单.add_command(label="恢复操作模拟器", command=self.恢复操作模拟器)
+        # 部落冲突包名
+        self.label2 = tk.Label(self, text="部落冲突包名:")
+        self.label2.grid(row=1, column=0)
+        self.entry2 = tk.Entry(self)
+        self.entry2.grid(row=1, column=1)
 
-        # 将更多子菜单添加到菜单栏
-        self.菜单栏.add_cascade(label="更多", menu=self.更多子菜单)
+        # 循环最大等待秒数
+        self.label3 = tk.Label(self, text="循环最大等待秒数:")
+        self.label3.grid(row=2, column=0)
+        self.entry3 = tk.Entry(self)
+        self.entry3.grid(row=2, column=1)
 
-        # 将我们建立好的整一个菜单栏在root窗口中显示
-        self.master.config(menu=self.菜单栏)
+        # 需要执行多少秒
+        self.label4 = tk.Label(self, text="需要执行多少秒:")
+        self.label4.grid(row=3, column=0)
+        self.entry4 = tk.Entry(self)
+        self.entry4.grid(row=3, column=1)
 
-        Label(self, text="当前运行状态").grid(row=0, column=0)
+        # 一直执行
+        self.check_var1 = tk.BooleanVar()
+        self.check1 = tk.Checkbutton(self, text="一直执行", variable=self.check_var1)
+        self.check1.grid(row=4, column=0)
 
-        # 创建滚动条并关联到列表框
-        self.滚动条 = Scrollbar(self)
-        self.列表框 = Listbox(self, width=50, yscrollcommand=self.滚动条.set)
-        self.滚动条.config(command=self.列表框.yview)
+        # 是否开启刷墙
+        self.check_var2 = tk.BooleanVar()
+        self.check2 = tk.Checkbutton(self, text="是否开启刷墙", variable=self.check_var2)
+        self.check2.grid(row=5, column=0)
 
-        # 使用grid布局
-        self.列表框.grid(row=1, column=0, sticky=N + S + E + W)
-        self.滚动条.grid(row=1, column=1, sticky=N + S)
+        # 至少多少金币开始刷墙
+        self.label5 = tk.Label(self, text="至少多少金币开始刷墙:")
+        self.label5.grid(row=6, column=0)
+        self.entry5 = tk.Entry(self)
+        self.entry5.grid(row=6, column=1)
 
-        # 配置行和列的权重，使列表框和滚动条可以扩展
-        self.grid_rowconfigure(1, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        # 至少多少圣水开始刷墙
+        self.label6 = tk.Label(self, text="至少多少圣水开始刷墙:")
+        self.label6.grid(row=7, column=0)
+        self.entry6 = tk.Entry(self)
+        self.entry6.grid(row=7, column=1)
 
-        Button(self, text="添加列表项", command=self.添加列表项).grid(row=2, column=0, columnspan=2)
+        # 确定按钮
+        self.button = tk.Button(self, text="确定", command=self.get_config)
+        self.button.grid(row=8, columnspan=2)
 
-    def 添加列表项(self):
-        # 检查列表框中的项数是否超过500，如果是则删除最早的一项
-        if self.列表框.size() >= 500:
-            self.列表框.delete(0)
-        # 插入新项到列表框
-        self.列表框.insert(END, "新项")
-        # 滚动到列表框的最底部
-        self.列表框.yview_moveto(1)
+    def get_config(self):
+        雷电模拟器索引 = self.entry1.get()
+        部落冲突包名 = self.entry2.get()
+        循环最大等待秒数 = self.entry3.get()
+        需要执行多少秒 = self.entry4.get()
+        一直执行 = self.check_var1.get()
+        是否开启刷墙 = self.check_var2.get()
+        至少多少金币开始刷墙 = self.entry5.get()
+        至少多少圣水开始刷墙 = self.entry6.get()
 
-    def 启动脚本(self):
-        print("启动脚本")
+        # 这里可以根据需要将获取到的配置参数传递给你的程序
 
-    def 停止脚本(self):
-        print("停止脚本")
-
-    def 隐藏模拟器(self):
-        print("隐藏模拟器")
-
-    def 显示模拟器(self):
-        print("显示模拟器")
-
-    def 禁止操作模拟器(self):
-        print("禁止操作模拟器")
-
-    def 恢复操作模拟器(self):
-        print("恢复操作模拟器")
+        # 打印获取到的配置参数
+        print("雷电模拟器索引:", 雷电模拟器索引)
+        print("部落冲突包名:", 部落冲突包名)
+        print("循环最大等待秒数:", 循环最大等待秒数)
+        print("需要执行多少秒:", 需要执行多少秒)
+        print("一直执行:", 一直执行)
+        print("是否开启刷墙:", 是否开启刷墙)
+        print("至少多少金币开始刷墙:", 至少多少金币开始刷墙)
+        print("至少多少圣水开始刷墙:", 至少多少圣水开始刷墙)
 
 
-根窗口 = Tk()
-根窗口.geometry("400x250+700+400")
-根窗口.title("部落冲突夜世界辅助")
-
-我的程序 = 界面程序(根窗口)
-根窗口.mainloop()
+# 创建界面对象
+app = ConfigGUI()
+app.mainloop()
