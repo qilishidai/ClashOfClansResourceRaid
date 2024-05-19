@@ -33,6 +33,12 @@ class 界面程序(Frame):
         self.菜单栏 = Menu(self.master)
         self.菜单栏.add_command(label="启动", command=self.启动脚本)
         self.菜单栏.add_command(label="停止", command=self.停止脚本)
+        # self.菜单栏.add_separator()
+        # self.菜单栏.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
+        # self.菜单栏.add_command(label="显示模拟器", command=self.显示模拟器)
+        # self.菜单栏.add_separator()
+        # self.菜单栏.add_command(label="禁止操作模拟器", command=self.禁止操作模拟器)
+        # self.菜单栏.add_command(label="恢复操作模拟器", command=self.恢复操作模拟器)
 
         # 更多子菜单,并添加相关选项
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
