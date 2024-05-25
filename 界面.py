@@ -1,20 +1,11 @@
-import ctypes
 import datetime
 import queue
 import sys
 import threading
 from tkinter import *
 
-import win32com
-
 from mainGUI import 窗口调用
-#
-# # 加载注册com组件的dll
-# 免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
-# # 调用免注册dll中的setupA函数注册opdll
-# 是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
-# # 创建op对象
-# op = win32com.client.Dispatch("op.opsoft")
+
 
 class 界面程序(Frame):
     def __init__(self, master=None):
@@ -33,12 +24,6 @@ class 界面程序(Frame):
         self.菜单栏 = Menu(self.master)
         self.菜单栏.add_command(label="启动", command=self.启动脚本)
         self.菜单栏.add_command(label="停止", command=self.停止脚本)
-        # self.菜单栏.add_separator()
-        # self.菜单栏.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
-        # self.菜单栏.add_command(label="显示模拟器", command=self.显示模拟器)
-        # self.菜单栏.add_separator()
-        # self.菜单栏.add_command(label="禁止操作模拟器", command=self.禁止操作模拟器)
-        # self.菜单栏.add_command(label="恢复操作模拟器", command=self.恢复操作模拟器)
 
         # 更多子菜单,并添加相关选项
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
@@ -68,9 +53,6 @@ class 界面程序(Frame):
         # 配置行和列的权重，使列表框和滚动条可以扩展
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        # Button(self, text="添加列表项", command=self.添加列表项).grid(row=2, column=0, columnspan=2)
-
 
 
     def 打印状态(self, 打印的内容):
@@ -112,6 +94,7 @@ class 界面程序(Frame):
 
     def 停止脚本(self):
         if self.脚本线程.is_alive():
+            self.脚本线程.terminate()
             self.要求脚本停止 = True
             self.打印状态("已通知脚本进程停止脚本,打完毕本场鱼即刻停止")
         else:
@@ -149,8 +132,6 @@ class 界面程序(Frame):
 def 关闭窗口():
     print("用户点击了关闭按钮")
     sys.exit()
-    exi
-    # 这里可以添加你想要的关闭操作
 
 根窗口 = Tk()
 根窗口.geometry("600x250+700+400")
