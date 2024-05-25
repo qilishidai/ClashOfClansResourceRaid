@@ -1,5 +1,6 @@
 import multiprocessing
 import sys
+import time
 from tkinter import Tk
 
 from 界面程序 import 界面程序
@@ -7,8 +8,10 @@ from 界面程序 import 界面程序
 
 def 关闭窗口(主界面):
     print("用户点击了关闭按钮")
+    主界面.恢复操作模拟器()
+    time.sleep(0.1)#确保模拟器已经恢复操作
     主界面.停止脚本()
-    sys.exit()
+    exit()
 
 
 if __name__ == '__main__':

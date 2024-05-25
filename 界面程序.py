@@ -333,6 +333,7 @@ class 界面程序(Frame):
 
 
     def 恢复操作模拟器(self):
+
         if self.脚本进程 is not None and self.脚本进程.is_alive():
             self.禁用启用模拟器消息队列.put("恢复操作模拟器")
         else:
