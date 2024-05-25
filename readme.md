@@ -53,4 +53,7 @@
 ```shell
 pyinstaller --noconsole --exclude-module=cv2 main.py
 ```
+### 第三方库
+1.[OP(operator & open)](https://github.com/WallBreaker2/op)
+
 
