@@ -207,7 +207,7 @@ class 界面程序(Frame):
 
         self.脚本进程 = None
         self.运行状态消息队列 = multiprocessing.Queue()
-        self.禁用启用模拟器消息队列 = multiprocessing.Queue()
+        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()
         # 定时检查队列中的消息
         self.检查消息()
         self.暂停状态 = False
@@ -281,10 +281,10 @@ class 界面程序(Frame):
         self.设置参数 = 设置窗口.加载设置()
 
         if self.脚本进程 is None or not self.脚本进程.is_alive():
-            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.运行状态消息队列, self.禁用启用模拟器消息队列,self.设置参数,))
+            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.运行状态消息队列, self.禁用启用模拟器关闭监听线程消息队列, self.设置参数,))
 
             self.脚本进程.start()
-            self.打印状态(f"启动了脚本进程，进程ID: {self.脚本进程.pid}")
+            self.打印状态(f"启动了脚本进程，进程PID: {self.脚本进程.pid}")
             self.暂停状态 = False  # 启动脚本时重置暂停状态
         elif self.暂停状态:
             self.打印状态("恢复脚本")
@@ -304,7 +304,8 @@ class 界面程序(Frame):
             self.打印状态("脚本未启动或已停止")
 
     def 停止脚本(self):
-        if self.脚本进程 is not None and self.脚本进程.is_alive():
+
+        if self.脚本进程 is not None:
             self.脚本进程.terminate()
             self.脚本进程.join()  # 确保进程终止
             # self.打印状态("停止脚本")
@@ -327,7 +328,7 @@ class 界面程序(Frame):
 
     def 禁止操作模拟器(self):
         if self.脚本进程 is not None and self.脚本进程.is_alive():
-            self.禁用启用模拟器消息队列.put("禁止操作模拟器")
+            self.禁用启用模拟器关闭监听线程消息队列.put("禁止操作模拟器")
         else:
             self.打印状态("脚本进程未启动")
 
@@ -335,7 +336,7 @@ class 界面程序(Frame):
     def 恢复操作模拟器(self):
 
         if self.脚本进程 is not None and self.脚本进程.is_alive():
-            self.禁用启用模拟器消息队列.put("恢复操作模拟器")
+            self.禁用启用模拟器关闭监听线程消息队列.put("恢复操作模拟器")
         else:
             self.打印状态("脚本进程未启动")
 
