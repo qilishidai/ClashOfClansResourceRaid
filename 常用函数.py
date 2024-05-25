@@ -1,8 +1,6 @@
 import random
-import subprocess
-import time
-import cv2
-from 配置文件 import 雷电模拟器安装目录, 雷电模拟器索引, 部落冲突包名
+
+
 
 
 
@@ -126,6 +124,7 @@ def 计算相邻点所确定的直线(points, image=None):
     """
     # 检查是否提供了图像
     if image is not None:
+        import cv2
         # 画出四个点
         for point in points:
             cv2.circle(image, point, 5, (0, 255, 0), -1)
