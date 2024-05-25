@@ -206,7 +206,8 @@ class 界面程序(Frame):
         self.脚本进程 = None
 
         self.脚本进程 = None
-        self.队列 = multiprocessing.Queue()
+        self.运行状态消息队列 = multiprocessing.Queue()
+        self.禁用启用模拟器消息队列 = multiprocessing.Queue()
         # 定时检查队列中的消息
         self.检查消息()
         self.暂停状态 = False
@@ -270,8 +271,8 @@ class 界面程序(Frame):
         self.列表框.yview_moveto(1)
 
     def 检查消息(self):
-        while not self.队列.empty():
-            消息 = self.队列.get()
+        while not self.运行状态消息队列.empty():
+            消息 = self.运行状态消息队列.get()
             self.打印状态(消息)
         self.after(100, self.检查消息)  # 每100毫秒检查一次消息
 
@@ -280,7 +281,7 @@ class 界面程序(Frame):
         self.设置参数 = 设置窗口.加载设置()
 
         if self.脚本进程 is None or not self.脚本进程.is_alive():
-            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.队列,self.设置参数))
+            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.运行状态消息队列, self.禁用启用模拟器消息队列,self.设置参数,))
 
             self.脚本进程.start()
             self.打印状态(f"启动了脚本进程，进程ID: {self.脚本进程.pid}")
@@ -325,18 +326,17 @@ class 界面程序(Frame):
             self.op.SetWindowState(self.顶层窗口句柄, 7)
 
     def 禁止操作模拟器(self):
-        if self.op is None:
-            self.打印状态("未成功绑定窗口")
+        if self.脚本进程 is not None and self.脚本进程.is_alive():
+            self.禁用启用模拟器消息队列.put("禁止操作模拟器")
         else:
-            self.op.SetWindowState(self.顶层窗口句柄, 10)
-            self.打印状态("禁止操作模拟器")
+            self.打印状态("脚本进程未启动")
+
 
     def 恢复操作模拟器(self):
-        if self.op is None:
-            self.打印状态("未成功绑定窗口")
+        if self.脚本进程 is not None and self.脚本进程.is_alive():
+            self.禁用启用模拟器消息队列.put("恢复操作模拟器")
         else:
-            self.op.SetWindowState(self.顶层窗口句柄, 11)
-            self.打印状态("恢复操作模拟器")
+            self.打印状态("脚本进程未启动")
 
 
     def 打开设置窗口(self):
