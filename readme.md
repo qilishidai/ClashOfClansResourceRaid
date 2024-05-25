@@ -5,7 +5,7 @@
 2. **模拟器分辨率设置宽800，高600，dpi160**（重要）
 3. 在模拟器中安装部落冲突并登录你的账号，确保进入**夜世界**。
 4. 部落冲突中设置配兵推荐全亡灵，或者全弓箭手。主要是还没写其它兵种判断（偷懒）
-5. [下载](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.0)脚本,解压后双击main.exe运行
+5. [下载](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.2)脚本,解压后双击"部落冲突夜世界辅助.exe"运行
 6. 点击菜单栏中的“更多”选项，然后选择“设置”，进行所需的设置。![设置界面](img/设置界面.png)
 7. 点击菜单栏中的“启动”选项开始挂机
 #### 注意:
