@@ -311,6 +311,7 @@ class 界面程序(Frame):
             self.打印状态("脚本已启动且未暂停")
 
     def 暂停脚本(self):
+        self.恢复操作模拟器()
         if self.脚本进程 is not None and self.脚本进程.is_alive():
             self.打印状态("暂停脚本")
             进程 = psutil.Process(self.脚本进程.pid)
