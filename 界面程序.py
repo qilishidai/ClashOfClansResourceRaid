@@ -10,7 +10,6 @@ from tkinter import ttk
 import psutil
 
 import 脚本主进程入口
-# from 脚本主进程入口 import 窗口调用 as 窗口启动
 
 import tkinter as tk
 
@@ -65,7 +64,8 @@ class 设置窗口(Toplevel):
         self.包名选择 = ttk.Combobox(self, values=["国服", "国际服", "自定义"])
         self.包名选择.grid(row=1, column=1, padx=10, pady=5)
         self.包名选择.bind("<<ComboboxSelected>>", self.更新包名输入框)
-
+        工具提示(self.包名选择,
+                        "注意:错误的选择会导致无法打开部落冲突,如果你模拟器打开了,而游戏没打开,请检查这一项设置")
         self.自定义包名 = Entry(self)
         self.自定义包名.grid(row=2, column=1, padx=10, pady=5)
         self.自定义包名.grid_remove()
@@ -79,6 +79,8 @@ class 设置窗口(Toplevel):
         self.需要执行多少秒_label.grid(row=4, column=0, sticky=W, padx=10, pady=5)
         self.需要执行多少秒 = Entry(self)
         self.需要执行多少秒.grid(row=4, column=1, padx=10, pady=5)
+        工具提示(self.需要执行多少秒,
+                        "如果你需要按照小时来设置定时,计算方法为你要挂机的小时数乘以3600,")
 
         self.是否开启刷墙 = BooleanVar()
         self.是否开启刷墙_check = Checkbutton(self, text="是否开启刷墙", variable=self.是否开启刷墙,
@@ -86,8 +88,11 @@ class 设置窗口(Toplevel):
         self.是否开启刷墙_check.grid(row=3, columnspan=2, padx=10, pady=5)
 
         self.循环最大等待秒数_label = Label(self, text="循环最大等待秒数")
+
         self.循环最大等待秒数_label.grid(row=6, column=0, sticky=W, padx=10, pady=5)
         self.循环最大等待秒数 = Entry(self)
+        工具提示(self.循环最大等待秒数,
+                        "这个设置决定了游戏上线时脚本等待的最大时间,卡白云的最大等待时间.如果你不知道你在做什么,请不要动这个设置")
         self.循环最大等待秒数.grid(row=6, column=1, padx=10, pady=5)
 
         self.至少多少金币开始刷墙_label = Label(self, text="至少多少金币开始刷墙")
@@ -207,7 +212,7 @@ class 界面程序(Frame):
 
         self.脚本进程 = None
         self.运行状态消息队列 = multiprocessing.Queue()
-        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()
+        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()#用于第一次打开脚本是,直接退出.main.py的中调用
         # 定时检查队列中的消息
         self.检查消息()
         self.暂停状态 = False
@@ -251,6 +256,15 @@ class 界面程序(Frame):
         # 配置行和列的权重，使列表框和滚动条可以扩展
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.打印状态("欢迎使用脚本，具体使用步骤如下:\n")
+        self.打印状态("1.在模拟器中安装部落冲突并登录你的账号，确保进入**夜世界**。")
+        self.打印状态("2.模拟器分辨率设置宽800，高600，dpi160\n")
+        self.打印状态("3.部落冲突中设置配兵推荐全亡灵，或者全弓箭手。主要是还没写其它兵种判断（偷懒）")
+        self.打印状态("4.点击'更多'的'设置'可以对脚本进行配置\n")
+        self.打印状态("5.点击'启动'按钮运行脚本\n")
+
+
+
 
         # self.启动按钮 = ttk.Button(self, text="启动脚本", command=self.启动脚本)
         # self.启动按钮.grid(row=0, column=1)
@@ -279,6 +293,8 @@ class 界面程序(Frame):
     def 启动或恢复脚本(self):
 
         self.设置参数 = 设置窗口.加载设置()
+        #重新创建消息队列,因为重启线程后出现该消息队列无法正常收到消息的问题,可能是被系统回收了
+        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()
 
         if self.脚本进程 is None or not self.脚本进程.is_alive():
             self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.运行状态消息队列, self.禁用启用模拟器关闭监听线程消息队列, self.设置参数,))
@@ -308,7 +324,6 @@ class 界面程序(Frame):
         if self.脚本进程 is not None:
             self.脚本进程.terminate()
             self.脚本进程.join()  # 确保进程终止
-            # self.打印状态("停止脚本")
             self.打印状态(f"停止脚本，进程ID: {self.脚本进程.pid}")
         else:
             self.打印状态("脚本未启动")

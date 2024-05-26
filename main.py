@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     multiprocessing.freeze_support()#用于解决打包后重复执行创建窗口命令
     根窗口 = Tk()
-    根窗口.geometry("600x250+700+400")
+    根窗口.geometry("620x300+700+400")
     根窗口.title("部落冲突夜世界辅助")
 
     我的程序 = 界面程序(根窗口)
