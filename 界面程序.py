@@ -1,3 +1,4 @@
+import ctypes
 import datetime
 import json
 import multiprocessing
@@ -8,10 +9,13 @@ from tkinter import *
 from tkinter import ttk
 
 import psutil
+import win32com
 
 import 脚本主进程入口
 
 import tkinter as tk
+from 模拟器状态 import 雷电模拟器
+
 
 class 工具提示:
     def __init__(self, 控件, 文本):
@@ -39,8 +43,6 @@ class 工具提示:
             self.tip.destroy()
 
 
-
-
 class 设置窗口(Toplevel):
     def __init__(self, master=None):
         super().__init__(master)
@@ -58,14 +60,14 @@ class 设置窗口(Toplevel):
         self.雷电模拟器索引 = Entry(self)
         self.雷电模拟器索引.grid(row=0, column=1, padx=10, pady=5)
         工具提示(self.雷电模拟器索引,
-                        "在雷电多开器中创建了多个模拟器，此处应填写要启动的模拟器的索引。例如，如果多开器页面中第一个模拟器索引为0，第二个为1，依此类推。")
+                 "在雷电多开器中创建了多个模拟器，此处应填写要启动的模拟器的索引。例如，如果多开器页面中第一个模拟器索引为0，第二个为1，依此类推。")
 
         Label(self, text="部落冲突包名").grid(row=1, column=0, sticky=W, padx=10, pady=5)
         self.包名选择 = ttk.Combobox(self, values=["国服", "国际服", "自定义"])
         self.包名选择.grid(row=1, column=1, padx=10, pady=5)
         self.包名选择.bind("<<ComboboxSelected>>", self.更新包名输入框)
         工具提示(self.包名选择,
-                        "注意:错误的选择会导致无法打开部落冲突,如果你模拟器打开了,而游戏没打开,请检查这一项设置")
+                 "注意:错误的选择会导致无法打开部落冲突,如果你模拟器打开了,而游戏没打开,请检查这一项设置")
         self.自定义包名 = Entry(self)
         self.自定义包名.grid(row=2, column=1, padx=10, pady=5)
         self.自定义包名.grid_remove()
@@ -80,7 +82,7 @@ class 设置窗口(Toplevel):
         self.需要执行多少秒 = Entry(self)
         self.需要执行多少秒.grid(row=4, column=1, padx=10, pady=5)
         工具提示(self.需要执行多少秒,
-                        "如果你需要按照小时来设置定时,计算方法为你要挂机的小时数乘以3600,")
+                 "如果你需要按照小时来设置定时,计算方法为你要挂机的小时数乘以3600,")
 
         self.是否开启刷墙 = BooleanVar()
         self.是否开启刷墙_check = Checkbutton(self, text="是否开启刷墙", variable=self.是否开启刷墙,
@@ -92,7 +94,7 @@ class 设置窗口(Toplevel):
         self.循环最大等待秒数_label.grid(row=6, column=0, sticky=W, padx=10, pady=5)
         self.循环最大等待秒数 = Entry(self)
         工具提示(self.循环最大等待秒数,
-                        "这个设置决定了游戏上线时脚本等待的最大时间,卡白云的最大等待时间.如果你不知道你在做什么,请不要动这个设置")
+                 "这个设置决定了游戏上线时脚本等待的最大时间,卡白云的最大等待时间.如果你不知道你在做什么,请不要动这个设置")
         self.循环最大等待秒数.grid(row=6, column=1, padx=10, pady=5)
 
         self.至少多少金币开始刷墙_label = Label(self, text="至少多少金币开始刷墙")
@@ -106,7 +108,7 @@ class 设置窗口(Toplevel):
         self.至少多少圣水开始刷墙.grid(row=8, column=1, padx=10, pady=5)
 
         Button(self, text="保存", command=self.保存设置).grid(row=9, columnspan=2, pady=10)
-        Label(self,text="注意:保存的设置会在下一次启动脚本时生效").grid(row=10, columnspan=2, )
+        Label(self, text="注意:保存的设置会在下一次启动脚本时生效").grid(row=10, columnspan=2, )
 
     def 更新包名输入框(self, event):
         if self.包名选择.get() == "自定义":
@@ -196,6 +198,7 @@ class 设置窗口(Toplevel):
         if "至少多少圣水开始刷墙" in self.settings and self.settings["是否开启刷墙"]:
             self.至少多少圣水开始刷墙.insert(0, self.settings["至少多少圣水开始刷墙"])
 
+
 class 界面程序(Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -203,20 +206,19 @@ class 界面程序(Frame):
         self.master = master
         self.pack(fill=BOTH, expand=True)
         self.创建窗口()
-        self.queue = queue.Queue()
-        self.op = None
-        self.顶层窗口句柄 = None
-        self.绑定窗口句柄 = None
-        self.要求脚本停止 = False
-        self.脚本进程 = None
-
         self.脚本进程 = None
         self.运行状态消息队列 = multiprocessing.Queue()
-        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()#用于第一次打开脚本是,直接退出.main.py的中调用
+
         # 定时检查队列中的消息
         self.检查消息()
         self.暂停状态 = False
-        # print()
+
+        # 加载注册com组件的dll
+        免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
+        # 调用免注册dll中的setupA函数注册opdll
+        是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
+        # 创建op对象
+        self.op = win32com.client.Dispatch("op.opsoft")
 
     def 创建窗口(self):
         self.菜单栏 = Menu(self.master)
@@ -227,8 +229,8 @@ class 界面程序(Frame):
         # 更多子菜单,并添加相关选项
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
 
-        # self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
-        # self.更多子菜单.add_command(label="显示模拟器", command=self.显示模拟器)
+        self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器,state=tk.DISABLED)
+        self.更多子菜单.add_command(label="显示模拟器", command=self.显示模拟器)
 
         self.更多子菜单.add_separator()  # 添加分割线
         self.更多子菜单.add_command(label="禁止操作模拟器", command=self.禁止操作模拟器)
@@ -263,13 +265,6 @@ class 界面程序(Frame):
         self.打印状态("4.点击'更多'的'设置'可以对脚本进行配置\n")
         self.打印状态("5.点击'启动'按钮运行脚本\n")
 
-
-
-
-        # self.启动按钮 = ttk.Button(self, text="启动脚本", command=self.启动脚本)
-        # self.启动按钮.grid(row=0, column=1)
-
-
     def 打印状态(self, 打印的内容):
         current_time = datetime.datetime.now()
         # 格式化当前时间，精确到秒
@@ -293,11 +288,10 @@ class 界面程序(Frame):
     def 启动或恢复脚本(self):
 
         self.设置参数 = 设置窗口.加载设置()
-        #重新创建消息队列,因为重启线程后出现该消息队列无法正常收到消息的问题,可能是被系统回收了
-        self.禁用启用模拟器关闭监听线程消息队列 = multiprocessing.Queue()
 
         if self.脚本进程 is None or not self.脚本进程.is_alive():
-            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用, args=(self.运行状态消息队列, self.禁用启用模拟器关闭监听线程消息队列, self.设置参数,))
+            self.脚本进程 = multiprocessing.Process(target=脚本主进程入口.窗口调用,
+                                                    args=(self.运行状态消息队列, self.设置参数,))
 
             self.脚本进程.start()
             self.打印状态(f"启动了脚本进程，进程PID: {self.脚本进程.pid}")
@@ -311,8 +305,9 @@ class 界面程序(Frame):
             self.打印状态("脚本已启动且未暂停")
 
     def 暂停脚本(self):
-        self.恢复操作模拟器()
+
         if self.脚本进程 is not None and self.脚本进程.is_alive():
+            self.恢复操作模拟器()
             self.打印状态("暂停脚本")
             进程 = psutil.Process(self.脚本进程.pid)
             进程.suspend()
@@ -323,6 +318,7 @@ class 界面程序(Frame):
     def 停止脚本(self):
 
         if self.脚本进程 is not None:
+            self.恢复操作模拟器()
             self.脚本进程.terminate()
             self.脚本进程.join()  # 确保进程终止
             self.打印状态(f"停止脚本，进程ID: {self.脚本进程.pid}")
@@ -330,32 +326,67 @@ class 界面程序(Frame):
             self.打印状态("脚本未启动")
 
     def 隐藏模拟器(self):
-        if self.op is None:
-            self.打印状态("未成功绑定窗口")
+
+        配置信息 = 设置窗口.加载设置()
+        雷电模拟器索引 = int(配置信息.get("雷电模拟器索引", "0"))
+        雷电模拟器实例 = 雷电模拟器(雷电模拟器索引)
+        if 雷电模拟器实例.模拟器是否启动():
+            self.op.MoveWindow(雷电模拟器实例.取顶层窗口句柄(), 1920, 1080)
+            self.打印状态("隐藏模拟器")
         else:
-            self.op.MoveWindow(self.顶层窗口句柄, 1920, 1080)
+            self.打印状态(f"{雷电模拟器实例.取模拟器名称()},未启动")
+
+
 
     def 显示模拟器(self):
-        if self.op is None:
-            self.打印状态("未成功绑定窗口")
+        配置信息 = 设置窗口.加载设置()
+        雷电模拟器索引 = int(配置信息.get("雷电模拟器索引", "0"))
+        雷电模拟器实例 = 雷电模拟器(雷电模拟器索引)
+        if 雷电模拟器实例.模拟器是否启动():
+            self.op.MoveWindow(雷电模拟器实例.取顶层窗口句柄(), 100, 100)
+            self.op.SetWindowState(雷电模拟器实例.取顶层窗口句柄(), 7)
+            self.打印状态("显示模拟器")
         else:
-            self.op.MoveWindow(self.顶层窗口句柄, 100, 100)
-            self.op.SetWindowState(self.顶层窗口句柄, 7)
+            self.打印状态(f"{雷电模拟器实例.取模拟器名称()},未启动")
+
+
+
+        # if self.op is None:
+        #     self.打印状态("未成功绑定窗口")
+        # else:
+        #     self.op.MoveWindow(self.顶层窗口句柄, 100, 100)
+        #     self.op.SetWindowState(self.顶层窗口句柄, 7)
 
     def 禁止操作模拟器(self):
-        if self.脚本进程 is not None and self.脚本进程.is_alive():
-            self.禁用启用模拟器关闭监听线程消息队列.put("禁止操作模拟器")
+        配置信息 = 设置窗口.加载设置()
+        雷电模拟器索引 = int(配置信息.get("雷电模拟器索引", "0"))
+        雷电模拟器实例 = 雷电模拟器(雷电模拟器索引)
+        if 雷电模拟器实例.模拟器是否启动():
+            self.op.SetWindowState(雷电模拟器实例.取顶层窗口句柄(), 10)
+            self.打印状态("禁止操作模拟器")
         else:
-            self.打印状态("脚本进程未启动")
+            self.打印状态(f"{雷电模拟器实例.取模拟器名称()},未启动")
 
+        # if self.脚本进程 is not None and self.脚本进程.is_alive():
+        #     self.禁用启用模拟器关闭监听线程消息队列.put("禁止操作模拟器")
+        # else:
+        #     self.打印状态("脚本进程未启动")
 
     def 恢复操作模拟器(self):
 
-        if self.脚本进程 is not None and self.脚本进程.is_alive():
-            self.禁用启用模拟器关闭监听线程消息队列.put("恢复操作模拟器")
+        配置信息 = 设置窗口.加载设置()
+        雷电模拟器索引 = int(配置信息.get("雷电模拟器索引", "0"))
+        雷电模拟器实例 = 雷电模拟器(雷电模拟器索引)
+        if 雷电模拟器实例.模拟器是否启动():
+            self.op.SetWindowState(雷电模拟器实例.取顶层窗口句柄(), 11)
+            self.打印状态("禁止操作模拟器")
         else:
-            self.打印状态("脚本进程未启动")
+            self.打印状态(f"{雷电模拟器实例.取模拟器名称()},未启动")
 
+        # if self.脚本进程 is not None and self.脚本进程.is_alive():
+        #     self.禁用启用模拟器关闭监听线程消息队列.put("恢复操作模拟器")
+        # else:
+        #     self.打印状态("脚本进程未启动")
 
     def 打开设置窗口(self):
         设置窗口(self)

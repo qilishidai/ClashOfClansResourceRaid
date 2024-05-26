@@ -1,11 +1,7 @@
 import ctypes
 import subprocess
-import threading
 import time
-
 import win32com.client
-# from win32com.client import Dispatch  # import moudles 第一次运行python -m pip install pywin32
-
 from 升级 import 升级建筑
 from 常用函数 import *
 from 配置文件 import *
@@ -17,46 +13,11 @@ from 配置文件 import *
 # 创建op对象
 op = win32com.client.Dispatch("op.opsoft")
 
-顶层窗口句柄=0
-
-def 监听消息(禁用启用模拟器消息队列,消息队列):
-    消息队列.put("启动监听脚本运行状态线程,用于恢复,禁用模拟器等操作")
-    global 顶层窗口句柄
-    global op
-    while True:
-        消息 = 禁用启用模拟器消息队列.get()
-        if 消息 == "禁止操作模拟器":
-            if 顶层窗口句柄!=0:
-                op.SetWindowState(顶层窗口句柄, 10)
-                消息队列.put("禁止操作模拟器")
-            else:
-                消息队列.put("未绑定窗口")
-
-
-        elif 消息 == "恢复操作模拟器":
-            if 顶层窗口句柄 != 0:
-                op.SetWindowState(顶层窗口句柄, 11)
-                消息队列.put("恢复操作模拟器")
-            else:
-                消息队列.put("未绑定窗口")
-
-        elif 消息 == "结束监听线程":
-            消息队列.put("结束监听脚本运行状态线程")
-            return
-
-def 窗口调用(消息队列, 禁用启用模拟器消息队列, 配置信息=None):
+def 窗口调用(消息队列, 配置信息=None):
     if 配置信息 is None:
         配置信息 = {}
     global op
-    global 顶层窗口句柄
     打印状态 = 消息队列.put
-
-    # 创建监听消息的线程
-    监听线程 = threading.Thread(target=监听消息, args=(禁用启用模拟器消息队列,消息队列))
-    监听线程.daemon = True#设置线程为守护线程（thread.daemon = True），这样当主进程退出时，所有守护线程会自动终止。
-    监听线程.start()
-
-
 
     # 解析字典中的配置信息,如果没有就使用默认设置
     雷电模拟器索引 = 配置信息.get("雷电模拟器索引", "0")
@@ -68,9 +29,7 @@ def 窗口调用(消息队列, 禁用启用模拟器消息队列, 配置信息=N
     至少多少金币开始刷墙 = 配置信息.get("至少多少金币开始刷墙", 2000000)
     至少多少圣水开始刷墙 = 配置信息.get("至少多少圣水开始刷墙", 2700000)
 
-    # print(雷电模拟器索引,部落冲突包名,一直执行,需要执行多少秒)
-
-
+    print(str(配置信息))
     打印状态("######本次运行设置######")
 
     # 逐行打印配置信息中的键值对
