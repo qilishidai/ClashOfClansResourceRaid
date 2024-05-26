@@ -1,7 +1,3 @@
-import subprocess
-import time
-import winreg
-
 
 import subprocess
 import time
@@ -123,8 +119,15 @@ class 雷电模拟器:
               - "高度"：高度整数
               - "DPI"：DPI整数
         """
-        模拟器状态 = subprocess.run(self.雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',
-                                    stdout=subprocess.PIPE)
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        模拟器状态 = subprocess.run(
+            [self.雷电模拟器安装目录 + "ldconsole.exe", "list2"],
+            encoding='gbk',
+            stdout=subprocess.PIPE,
+            startupinfo=startupinfo
+        )
         雷电模拟器运行信息 = self.将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
         return 雷电模拟器运行信息[self.雷电模拟器索引]
 
@@ -136,6 +139,15 @@ class 雷电模拟器:
         bool: 如果模拟器进程PID不为-1，则返回True，否则返回False。
         """
         return True if self.取模拟器所有状态()["进程PID"] != -1 else False
+
+    def 取模拟器名称(self):
+        """
+        获取当前模拟器实例的的标题名称。
+
+        返回值:
+        str: 当前模拟器实例的的标题名称。
+        """
+        return self.取模拟器所有状态()["标题"]
 
     def 取顶层窗口句柄(self):
         """
@@ -155,14 +167,6 @@ class 雷电模拟器:
         """
         return self.取模拟器所有状态()["绑定窗口句柄"]
 
-    def 取模拟器名称(self):
-        """
-        获取当前模拟器实例的的标题名称。
-
-        返回值:
-        str: 当前模拟器实例的的标题名称。
-        """
-        return self.取模拟器所有状态()["标题"]
     def 启动模拟器并打开应用(self, 包名):
         """
         启动当前模拟器实例并打开指定的应用。
@@ -170,11 +174,23 @@ class 雷电模拟器:
         参数:
         包名 (str): 要打开的应用的包名。
         """
-        subprocess.run(
-            self.雷电模拟器安装目录 + "ldconsole.exe runapp --index " + str(
-                self.雷电模拟器索引) + " --packagename \"" + 包名 + "\"",
-            shell=False)
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
+        subprocess.run(
+            [self.雷电模拟器安装目录 + "ldconsole.exe", "launchex", "--index", str(self.雷电模拟器索引), "--packagename", 包名],
+            shell=False,
+            startupinfo=startupinfo
+        )
+
+    def 打开应用(self, 包名):
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        subprocess.run(
+            [self.雷电模拟器安装目录 + "ldconsole.exe", "runapp", "--index", str(self.雷电模拟器索引), "--packagename", 包名],
+            shell=False,
+            startupinfo=startupinfo
+        )
 
     def 关闭模拟器中的应用(self, 包名):
         """
@@ -183,8 +199,12 @@ class 雷电模拟器:
         参数:
         包名 (str): 要关闭的应用的包名。
         """
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
         subprocess.run(
-            self.雷电模拟器安装目录 + "ldconsole.exe killapp --index " + str(
-                self.雷电模拟器索引) + " --packagename \"" + 包名 + "\"",
-            shell=False)
+            [self.雷电模拟器安装目录 + "ldconsole.exe", "killapp", "--index", str(self.雷电模拟器索引), "--packagename", 包名],
+            shell=False,
+            startupinfo=startupinfo
+        )
         time.sleep(1)

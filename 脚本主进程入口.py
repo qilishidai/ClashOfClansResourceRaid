@@ -1,10 +1,11 @@
 import ctypes
-import subprocess
+import os
 import time
 import win32com.client
 from 升级 import 升级建筑
 from 常用函数 import *
-from 配置文件 import *
+from 模拟器状态 import 雷电模拟器
+# from 配置文件 import *
 
 # 加载注册com组件的dll
 免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
@@ -45,6 +46,8 @@ def 窗口调用(消息队列, 配置信息=None):
     当前圣水 = -1
     刷墙成功次数 = 0
     未绑定过窗口 = True
+    雷电模拟器实例 = 雷电模拟器(int(雷电模拟器索引))
+    目前脚本工作目录 = os.getcwd()
 
     def 点击(x, y, 延时=300):
         op.MoveTo(x, y)
@@ -52,9 +55,10 @@ def 窗口调用(消息队列, 配置信息=None):
         op.Delay(延时)
 
     def 关闭游戏(原因=None):
-        subprocess.run(
-            雷电模拟器安装目录 + "ldconsole.exe killapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
-            shell=True)
+        雷电模拟器实例.关闭模拟器中的应用(部落冲突包名)
+        # subprocess.run(
+        #     雷电模拟器安装目录 + "ldconsole.exe killapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
+        #     shell=True)
         time.sleep(1)
 
         if 原因 is not None:
@@ -68,64 +72,40 @@ def 窗口调用(消息队列, 配置信息=None):
             if time.time() - 开始执行脚本时间 > 需要执行多少秒:
                 关闭游戏("到时间了")
                 exit()
-        #第一次循环和正常非正常结束循环的情况.则进入这个if,启动模拟器和游戏,和修复模拟器最小化情况
-        if 正常结束上一轮打鱼而进入新一轮打鱼 is False:
-            模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',
-                                        stdout=subprocess.PIPE)
-            雷电模拟器运行信息 = 将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
-            if 雷电模拟器运行信息[int(雷电模拟器索引)]["绑定窗口句柄"] == 0:
-                #启动模拟器并打开游戏
-                subprocess.run(
-                    雷电模拟器安装目录 + "ldconsole.exe launchex  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
-                    shell=True)
 
-                while True:  # 循环判断模拟器是否启动成功
-                    模拟器状态 = subprocess.run(雷电模拟器安装目录 + "ldconsole.exe list2", encoding='gbk',
-                                                stdout=subprocess.PIPE)
-                    雷电模拟器运行信息 = 将雷电模拟器命令行返回信息解析为字典(模拟器状态.stdout)
+        if not 正常结束上一轮打鱼而进入新一轮打鱼:
+            if not 雷电模拟器实例.模拟器是否启动():
+                # 启动模拟器并打开游戏
+                雷电模拟器实例.启动模拟器并打开应用(部落冲突包名)
 
-                    if 雷电模拟器运行信息[int(雷电模拟器索引)]["绑定窗口句柄"] == 0:
-                        打印状态("等待模拟器启动")
-                        continue
-                    else:
-                        顶层窗口句柄 = 雷电模拟器运行信息[int(雷电模拟器索引)]["顶层窗口句柄"]
-                        打印状态("模拟器启动完毕")
-                        break
+                # 循环判断模拟器是否启动成功
+                while not 雷电模拟器实例.模拟器是否启动():
+                    打印状态("等待模拟器启动")
+                    op.Delay(500)
+                    continue
+                打印状态("模拟器启动完毕")
             else:
-                顶层窗口句柄 = 雷电模拟器运行信息[int(雷电模拟器索引)]["顶层窗口句柄"]
-                #模拟器如果已经启动了,就直接开游戏,这里有一个不好的地方是没有判断游戏是不是开启了,暴力直接打开游戏.因为如果不是因为错误关闭游戏的话新一轮打鱼游戏是已经开了的
-                #进入这一个的情况有,用户干预,模拟器打开游戏未打卡;循环超时,计数器过大导致的关闭游戏
-                subprocess.run(
-                    雷电模拟器安装目录 + "ldconsole.exe runapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
-                    shell=True)
+                雷电模拟器实例.打开应用(部落冲突包名)
 
-            #为绑定窗口则绑定窗口
+            # 绑定窗口
             if 未绑定过窗口:
-                是否成功绑定 = op.BindWindow(雷电模拟器运行信息[int(雷电模拟器索引)]["绑定窗口句柄"], "dx2", "windows",
-                                             "windows", 1)
+                是否成功绑定 = op.BindWindow(雷电模拟器实例.取绑定窗口句柄(), "dx2", "windows", "windows", 1)
                 # 等待绑定窗口完成
                 op.Delay(500)
-
                 打印状态("绑定窗口:" + str(是否成功绑定))
                 未绑定过窗口 = False
 
-            #判断窗口是否被最小化
-            雷电模拟器是否最小化 = op.GetWindowState(雷电模拟器运行信息[int(雷电模拟器索引)]["顶层窗口句柄"], 3)
-            if 雷电模拟器是否最小化 == 1:
+            # 判断窗口是否被最小化
+            if op.GetWindowState(雷电模拟器实例.取顶层窗口句柄(), 3) == 1:
                 打印状态("窗口已经最小化了,修改为还原状态")
-                op.SetWindowState(雷电模拟器运行信息[int(雷电模拟器索引)]["顶层窗口句柄"], 5)
-
+                op.SetWindowState(雷电模拟器实例.取顶层窗口句柄(), 5)
             else:
                 打印状态("没有最小化,脚本可以正常工作")
 
+
+        打印状态("##########新一轮打鱼,目前是第" + str(进攻完毕次数) + f"次打鱼完毕了.##########")
         打印状态("等待进入夜世界主界面")
-        打印状态(
-            "##########新一轮打鱼,目前是第" + str(进攻完毕次数) + f"次打鱼完毕了.##########")
 
-
-
-
-        # op.Capture(0, 0, 2000, 2000, "aaa1.bmp")
         # 判断循环是否超时间
         循环开始时间 = time.time()
         循环是否超时 = False
