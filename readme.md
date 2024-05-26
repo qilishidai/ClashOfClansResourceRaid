@@ -53,6 +53,7 @@
 ```shell
 pyinstaller --noconsole --exclude-module=cv2 main.py
 ```
+然后将源码的资源文件复制到dist\main里面
 ### 第三方库
 1.[OP(operator & open)](https://github.com/WallBreaker2/op)
 
