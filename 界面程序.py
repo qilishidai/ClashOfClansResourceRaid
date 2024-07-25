@@ -9,7 +9,9 @@ from tkinter import *
 from tkinter import ttk
 
 import psutil
+import win32api
 import win32com
+import win32con
 
 import 脚本主进程入口
 
@@ -229,8 +231,8 @@ class 界面程序(Frame):
         # 更多子菜单,并添加相关选项
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
 
-        self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器,state=tk.DISABLED)
-        # self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
+        # self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器,state=tk.DISABLED)
+        self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
         self.更多子菜单.add_command(label="显示模拟器", command=self.显示模拟器)
 
         self.更多子菜单.add_separator()  # 添加分割线
@@ -328,11 +330,17 @@ class 界面程序(Frame):
 
     def 隐藏模拟器(self):
 
+        # 获取屏幕宽高
+        屏幕宽度 = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+        屏幕高度 = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+
         配置信息 = 设置窗口.加载设置()
         雷电模拟器索引 = int(配置信息.get("雷电模拟器索引", "0"))
         雷电模拟器实例 = 雷电模拟器(雷电模拟器索引)
         if 雷电模拟器实例.模拟器是否启动():
-            self.op.MoveWindow(雷电模拟器实例.取顶层窗口句柄(), 1920, 1080)
+            #因为直接隐藏后台键盘操作会失效，所以移动到屏幕右下角藏起来
+            # self.op.SetWindowState(雷电模拟器实例.取顶层窗口句柄(), 6)
+            self.op.MoveWindow(雷电模拟器实例.取顶层窗口句柄(),屏幕宽度, 屏幕高度)
             self.打印状态("隐藏模拟器")
         else:
             self.打印状态(f"{雷电模拟器实例.取模拟器名称()},未启动")
