@@ -299,6 +299,7 @@ class 界面程序(Frame):
             self.脚本进程.start()
             self.打印状态(f"启动了脚本进程，进程PID: {self.脚本进程.pid}")
             self.暂停状态 = False  # 启动脚本时重置暂停状态
+            self.禁止操作模拟器()
         elif self.暂停状态:
             self.打印状态("恢复脚本")
             进程 = psutil.Process(self.脚本进程.pid)
