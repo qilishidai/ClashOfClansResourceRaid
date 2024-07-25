@@ -230,6 +230,7 @@ class 界面程序(Frame):
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
 
         self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器,state=tk.DISABLED)
+        # self.更多子菜单.add_command(label="隐藏模拟器", command=self.隐藏模拟器)
         self.更多子菜单.add_command(label="显示模拟器", command=self.显示模拟器)
 
         self.更多子菜单.add_separator()  # 添加分割线

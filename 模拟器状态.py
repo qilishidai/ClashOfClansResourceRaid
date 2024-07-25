@@ -2,6 +2,8 @@
 import subprocess
 import time
 import winreg
+import win32gui
+
 
 class 雷电模拟器:
     """
@@ -166,6 +168,22 @@ class 雷电模拟器:
         int: 绑定窗口句柄。
         """
         return self.取模拟器所有状态()["绑定窗口句柄"]
+
+    def 取绑定窗口句柄的下级窗口句柄(self):
+        父窗口句柄 = self.取模拟器所有状态()["绑定窗口句柄"]
+        子窗口列表 = []
+
+        def 枚举子窗口回调(hwnd, param):
+            子窗口列表.append(hwnd)
+            return True
+
+        win32gui.EnumChildWindows(父窗口句柄, 枚举子窗口回调, None)
+
+        if 子窗口列表:
+            print(子窗口列表[0])
+            return int(子窗口列表[0])
+        else:
+            return None
 
     def 启动模拟器并打开应用(self, 包名):
         """
