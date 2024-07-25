@@ -57,8 +57,12 @@ pyinstaller --noconsole --exclude-module=cv2 main.py
 ### 第三方库
 1.[OP(operator & open)](https://github.com/WallBreaker2/op)
 
-###更新记录
+### 更新记录
 2024年7月25日
 1. 后台模式截图的opengl模式，可支持隐藏模拟器运行（在菜单栏选择更多-隐藏模拟器）
 2. 重写键盘和鼠标操作类，修复模式opengl后台操作失的问题
+
+已知待修复问题
+1. 无法最小化模拟器运行,只可以通过操作界面隐藏模拟器
+2. 出发开始战斗后,有时候由于模拟器卡顿还在基地,需要图色判断.但是不影响使用,日后修复.
 
