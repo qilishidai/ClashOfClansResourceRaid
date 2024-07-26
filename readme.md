@@ -57,6 +57,7 @@ pyinstaller --noconsole --exclude-module=cv2 main.py
 ### 第三方库
 1.[OP(operator & open)](https://github.com/WallBreaker2/op)
 
+## 其他
 ### 更新记录
 2024年7月26日
 1. 修复刷墙时脚本滑动和点击实现问题
