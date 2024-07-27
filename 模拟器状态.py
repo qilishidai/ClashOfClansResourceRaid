@@ -180,7 +180,7 @@ class 雷电模拟器:
         win32gui.EnumChildWindows(父窗口句柄, 枚举子窗口回调, None)
 
         if 子窗口列表:
-            print(子窗口列表[0])
+            # print(子窗口列表[0])
             return int(子窗口列表[0])
         else:
             return None
