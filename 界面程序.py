@@ -226,7 +226,7 @@ class 界面程序(Frame):
         self.菜单栏 = Menu(self.master)
         self.菜单栏.add_command(label="启动", command=self.启动或恢复脚本)
         self.菜单栏.add_command(label="暂停", command=self.暂停脚本)
-        self.菜单栏.add_command(label="停止", command=self.停止脚本)
+        self.菜单栏.add_command(label="停止", command=self.停止脚本,state=tk.DISABLED)
 
         # 更多子菜单,并添加相关选项
         self.更多子菜单 = Menu(self.菜单栏, tearoff=0)
