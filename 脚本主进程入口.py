@@ -1,3 +1,4 @@
+import atexit
 import ctypes
 import os
 import time
@@ -35,6 +36,8 @@ def 是否黑屏(op):
             return False
 
     return True
+
+
 
 def 窗口调用(消息队列, 配置信息=None):
 
@@ -293,7 +296,7 @@ def 窗口调用(消息队列, 配置信息=None):
                 重启游戏后不检测模拟器启动状态 = False
                 break
 
-            _, x, y=op.FindPic(363,138,506,184, 目前脚本工作目录 + r"\img\开始进攻.jpg", "000000", 0.80, 0)
+            _, x, y=op.FindPic(363,138,506,184, 目前脚本工作目录 + r"\img\开始进攻.jpg", "000000", 0.50, 0)
 
             if x!=-1:
                 break

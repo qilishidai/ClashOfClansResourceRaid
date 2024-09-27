@@ -325,7 +325,7 @@ class 界面程序(Frame):
             self.恢复操作模拟器()
             self.脚本进程.terminate()
             self.脚本进程.join()  # 确保进程终止
-            self.打印状态(f"停止脚本，进程ID: {self.脚本进程.pid}")
+            self.打印状态(f"停止脚本，进程PID: {self.脚本进程.pid}")
         else:
             self.打印状态("脚本未启动")
 
