@@ -24,6 +24,7 @@
    1. 快速运行(推荐)
    
    下载[辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.6)解压后运行main.exe
+
    2. 源码运行(非必要)
 
    - 安装 Python，并执行以下命令安装依赖
