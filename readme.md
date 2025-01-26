@@ -19,21 +19,26 @@
 3. windows系统设置中缩放改为100%（重要）
 4. 在模拟器中安装部落冲突并登录你的账号，确保进入**夜世界**。
 5. 部落冲突中设置配兵推荐全亡灵（或在下兵界面能显示兵种数量的兵种），目前还未写其它兵种判断（偷懒）。
-6. 下载[辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.6)解压后运行main.exe
-7. 源码运行
 
-   a. 安装 Python，并执行以下命令安装依赖：
-       ```shell
-       pip install pywin32
-       pip install psutil
-       ```
+6. 运行辅助(下面1,2选一个)
+   1. 快速运行(推荐)
+   
+   下载[辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.6)解压后运行main.exe
+   2. 源码运行(非必要)
 
-   b. 在cmd窗口中执行：
+   - 安装 Python，并执行以下命令安装依赖
+   ```shell
+          pip install pywin32
+          pip install psutil
+   ```
+   - 在cmd窗口中执行：
       ```shell
       python main.py   
       ```
-8. 点击菜单栏中的“更多”选项，然后选择“设置”，进行所需的设置。![设置界面](img/设置界面.png)
-9. 点击菜单栏中的“启动”选项开始挂机。![运行界面](img/运行界面.png)
+
+
+7. 点击菜单栏中的“更多”选项，然后选择“设置”，进行所需的设置。![设置界面](img/设置界面.png)
+8. 点击菜单栏中的“启动”选项开始挂机。![运行界面](img/运行界面.png)
 
 ### 设置选项说明
 - `雷电模拟器索引`：用于指定在雷电多开器中选择的模拟器，多开器页面的第一个模拟器索引为0，第二个为1。
