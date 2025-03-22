@@ -27,7 +27,7 @@ https://pan.baidu.com/s/1ePeLAjJr30p60VAZ0PnuIw?pwd=w867
    
    下载[辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.6)解压后运行main.exe
 
-   2. 源码运行(非必要)
+   2. 源码运行(非必要，仅为需要修改调试源码的高级用户使用)
 
    - 安装 Python，并执行以下命令安装依赖
    ```shell
