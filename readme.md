@@ -15,6 +15,8 @@
 家乡辅助源码，查看根目录readme的文件，有源码编译和运行的说明
 https://pan.baidu.com/s/1ePeLAjJr30p60VAZ0PnuIw?pwd=w867
 
+家乡辅助由于昨天更新造兵功能已失效，预计这两天修复。
+
 ## 当前夜市界辅助使用方法
   
 
