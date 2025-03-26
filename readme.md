@@ -122,4 +122,5 @@ pyinstaller --noconsole --exclude-module=cv2 main.py
 2. 有时会无法正常检测进入夜世界，目前可以通过重启模拟器或辅助解决。
 3. ~~触发开始战斗后，有时由于模拟器卡顿还在基地，需要图色判断，但不影响使用，日后修复~~（7月31日已修复）。
 4. 国服刷墙问题
+
 🔗 **第三方库**：[OP（operator & open）](https://github.com/WallBreaker2/op)
