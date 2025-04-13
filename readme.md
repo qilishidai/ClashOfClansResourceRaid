@@ -22,7 +22,7 @@
 
 ### 🚀 **运行辅助（选择以下方式之一）**  
 #### **1. 快速运行（推荐）**  
-🔗 **[下载辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases/tag/v2.0.6)**，解压后运行 **`main.exe`**。  
+🔗 **[下载辅助](https://github.com/qilishidai/ClashOfClansResourceRaid/releases)**，解压后运行 **`main.exe`**。  
 
 #### **2. 源码运行（适用于开发者）**  
 - **安装 Python**，执行以下命令安装依赖：  
