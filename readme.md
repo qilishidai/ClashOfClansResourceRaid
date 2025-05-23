@@ -3,7 +3,7 @@
 
 **2025-5-24正常可用，正常维护中**
 
-[家乡版辅助](https://github.com/qilishidai/coc_robot)
+[家乡版辅助传送门](https://github.com/qilishidai/coc_robot)
 
 欢迎给star
 
