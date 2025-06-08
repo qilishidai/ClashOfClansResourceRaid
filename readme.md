@@ -109,6 +109,8 @@ pyinstaller --noconsole --exclude-module=cv2 main.py
 ---  
 ## 家乡打鱼辅助测试版（实验性功能）
 
+**目前已淘汰**由[家乡版辅助传送门](https://github.com/qilishidai/coc_robot)替代
+
 
 **家乡打鱼辅助测试版（实验性功能）**  
 
