@@ -402,7 +402,7 @@ def 窗口调用(消息队列, 配置信息=None):
         #放女巫技能
         while True:
             _,x, y=op.FindPic(4, 477, 800, 535, 目前脚本工作目录 + r"\img\紫色色块.bmp", "000000", 0.95, 0)
-            op.Delay(1000)
+            op.Delay(random.randint(500, 1000))
             if x<0:
                 break
             打印状态("释放兵种技能")
@@ -467,7 +467,7 @@ def 窗口调用(消息队列, 配置信息=None):
                     while True:
                         _, x, y = op.FindPic(4, 477, 800, 535, 目前脚本工作目录 + r"\img\紫色色块.bmp", "000000", 0.95,
                                              0)
-                        op.Delay(1000)
+                        op.Delay(random.randint(500, 1000))
                         if x < 0:
                             break
                         打印状态("释放兵种技能")
