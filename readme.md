@@ -69,6 +69,7 @@ pyinstaller --noconsole --exclude-module=cv2 main.py
 
 ### 📌 **2025年6月8日**  
 - 下兵后主动释放兵种技能
+- 兵种技能释放间隔添加随机波动
 
 
 
