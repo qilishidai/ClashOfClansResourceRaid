@@ -4,6 +4,7 @@ import json
 import multiprocessing
 import os
 import queue
+import sys
 
 from tkinter import *
 from tkinter import ttk
@@ -215,10 +216,17 @@ class 界面程序(Frame):
         self.检查消息()
         self.暂停状态 = False
 
+        # 兼容pyinstaller的目录获取
+        if getattr(sys, 'frozen', False):
+            当前文件所在目录 = sys._MEIPASS
+        else:
+            当前文件所在目录 = os.path.dirname(__file__)
+            print("当前获取op的目录为" + 当前文件所在目录)
+
         # 加载注册com组件的dll
-        免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
-        # 调用免注册dll中的setupA函数注册opdll
-        是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
+        免注册dll = ctypes.windll.LoadLibrary(当前文件所在目录 + R"\op-0.4.5_with_model\tools.dll")
+        dll目录 = 当前文件所在目录 + R"\op-0.4.5_with_model\op_x64.dll"
+        是否注册成功 = 免注册dll.setupW(dll目录)
         # 创建op对象
         self.op = win32com.client.Dispatch("op.opsoft")
 

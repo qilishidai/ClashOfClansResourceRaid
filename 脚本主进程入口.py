@@ -1,6 +1,6 @@
-import atexit
 import ctypes
 import os
+import sys
 import time
 import win32com.client
 
@@ -9,34 +9,23 @@ import 鼠标操作
 from 升级 import 升级建筑
 from 常用函数 import *
 from 模拟器状态 import 雷电模拟器
-# from 配置文件 import *
+
+#兼容pyinstaller的目录获取
+if getattr(sys, 'frozen', False):
+    当前文件所在目录 = sys._MEIPASS
+else:
+    当前文件所在目录 = os.path.dirname(__file__)
+    print("当前获取op的目录为" + 当前文件所在目录)
+
 
 # 加载注册com组件的dll
-免注册dll = ctypes.windll.LoadLibrary(R"op-0.4.5_with_model/tools.dll")
-# 调用免注册dll中的setupA函数注册opdll
-是否注册成功 = 免注册dll.setupA(bytes(R"op-0.4.5_with_model/op_x64.dll", encoding="utf-8"))
+免注册dll = ctypes.windll.LoadLibrary(当前文件所在目录+R"\op-0.4.5_with_model\tools.dll")
+dll目录=当前文件所在目录+R"\op-0.4.5_with_model\op_x64.dll"
+是否注册成功 = 免注册dll.setupW(dll目录)
+print("op免注册状态：" + str(是否注册成功))
+
 # 创建op对象
 op = win32com.client.Dispatch("op.opsoft")
-
-def 是否黑屏(op):
-    黑色 = "000000-000000"
-    相似度 = 0.95
-    黑色计数 = 0
-
-    for _ in range(3):
-        x = random.randint(0, 799)
-        y = random.randint(0, 599)
-        op.Delay(50)
-        if op.CmpColor(x, y, 黑色, 相似度) == 1:
-            黑色计数 += 1
-        else:
-            黑色计数 = 0
-
-        if 黑色计数 >= 10:
-            return False
-
-    return True
-
 
 
 def 窗口调用(消息队列, 配置信息=None):
@@ -73,24 +62,21 @@ def 窗口调用(消息队列, 配置信息=None):
     刷墙成功次数 = 0
     未绑定过窗口 = True
     雷电模拟器实例 = 雷电模拟器(int(雷电模拟器索引))
-    目前脚本工作目录 = os.getcwd()
+
+
+    目前脚本工作目录 = 当前文件所在目录
     鼠标 = 鼠标操作.鼠标控制器()
     键盘 = 键盘操作.键盘控制()
+
     def 点击(x, y, 延时=300):
         鼠标.移动到(x, y)
         鼠标.左键点击()
         op.Delay(延时)
-        # op.MoveTo(x, y)
-        # op.LeftClick()
-        # op.Delay(延时)
+
 
     def 关闭游戏(原因=None):
         雷电模拟器实例.关闭模拟器中的应用(部落冲突包名)
-        # subprocess.run(
-        #     雷电模拟器安装目录 + "ldconsole.exe killapp  --index " + 雷电模拟器索引 + " --packagename \"" + 部落冲突包名 + "\"",
-        #     shell=True)
         time.sleep(1)
-
         if 原因 is not None:
             打印状态(原因)
 
@@ -103,7 +89,7 @@ def 窗口调用(消息队列, 配置信息=None):
             if time.time() - 开始执行脚本时间 > 需要执行多少秒:
                 关闭游戏("到时间了")
                 return
-                # exit()
+
 
         if not 重启游戏后不检测模拟器启动状态:
             if not 雷电模拟器实例.模拟器是否启动():
@@ -170,6 +156,7 @@ def 窗口调用(消息队列, 配置信息=None):
         #op.Capture(561,361,647,388, 目前脚本工作目录 + r"\img\开始查找.jpg")
 
         while True:  #判断登录状态循环
+            op.Delay(500)
 
             result, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\签到关闭按钮.jpg|"+目前脚本工作目录 + r"\img\签到关闭按钮1.bmp", "000000", 0.92, 0)
             if result != -1:
@@ -191,22 +178,27 @@ def 窗口调用(消息队列, 配置信息=None):
                 点击(x, y)
                 op.Delay(1500)
 
-            op.Delay(1000)
 
             #确保宝石图标出现稳定才判断为登录成功
             结果, x, y = op.FindPic(752, 9, 789, 154, 目前脚本工作目录 + r"\img\宝石.jpg", "000000", 0.92, 0)
             op.Delay(1500)
             隔一段时间后结果, x, y = op.FindPic(752, 9, 789, 154, 目前脚本工作目录 + r"\img\宝石.jpg", "000000", 0.92, 0)
             if 结果 != -1 and 隔一段时间后结果 != -1:
-                打印状态(f"成功进入夜世界主界面")
+                打印状态(f"找到宝石图标，成功进入夜世界主界面")
                 break
 
-            结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\进攻图标.bmp", "000000", 0.92, 0)
+            结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\点券图标.bmp", "101010", 0.9, 0)
             op.Delay(1500)
-            隔一段时间后结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\进攻图标.bmp", "000000", 0.92, 0)
-
+            隔一段时间后结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\点券图标.bmp", "101010", 0.9, 0)
             if 结果 != -1 and 隔一段时间后结果 != -1:
-                打印状态(f"成功进入夜世界主界面")
+                打印状态(f"找到点券图标成功进入夜世界主界面")
+                break
+
+            结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\进攻图标.bmp", "101010", 0.92, 0)
+            op.Delay(1500)
+            隔一段时间后结果, x, y = op.FindPic(0, 0, 800, 600, 目前脚本工作目录 + r"\img\进攻图标.bmp", "101010", 0.92, 0)
+            if 结果 != -1 and 隔一段时间后结果 != -1:
+                打印状态(f"找到进攻图标成功进入夜世界主界面")
                 break
 
 
@@ -361,8 +353,7 @@ def 窗口调用(消息队列, 配置信息=None):
                 重启游戏后不检测模拟器启动状态 = False
                 break
 
-            # _, x, y = op.FindPic(0, 0, 2000, 2000,目前脚本工作目录 + r"\img\强化药水.jpg", "0", 0.9, 0)
-            # _, x, y = op.FindPic(0, 0, 257, 115, 目前脚本工作目录 + r"\img\举报.bmp", "000000", 0.8, 0)
+
             _, x, y = op.FindPic(0, 0, 2000, 2000, 目前脚本工作目录 + r"\img\更换兵种箭头.bmp|"+目前脚本工作目录 + r"\img\更换兵种箭头1.bmp",
                                  "000000", 0.6, 0)
 
@@ -376,9 +367,7 @@ def 窗口调用(消息队列, 配置信息=None):
         if 循环是否超时 is True:
             continue
 
-        识别到的剩余兵力字符 = op.OcrEx(20, 500, 2000, 2000, "ffffff-303030", 0.7)
-        #print(识别到的剩余兵力字符)
-        #x, y = 寻找第一个非零x坐标(识别到的剩余兵力字符)
+
 
        # 18, 21
         点击(x-18, y-21)
@@ -399,9 +388,6 @@ def 窗口调用(消息队列, 配置信息=None):
             点击(94,551)
 
 
-
-
-
         #出英雄
         点击(55, 299)
 
@@ -418,7 +404,6 @@ def 窗口调用(消息队列, 配置信息=None):
                 break
             打印状态("释放兵种技能")
             点击(x, y+40)
-
 
 
         第二场战斗是否已经开始 = False
@@ -441,14 +426,9 @@ def 窗口调用(消息队列, 配置信息=None):
                     循环开始时间 = time.time()  #因为开始第二场战斗,重置等待回营的超时时间,从现在重新计算等待时间
                     第二场战斗是否已经开始 = True  #确保下一次不判断,
                     打印状态("第二场次战斗")
-                    #88,500,577,542
 
                     op.Delay(2500)
-                    #识别兵种的数量4x等字符位置,确定还有剩余兵力的兵种,以点击
-                    识别到的剩余兵力字符k = op.OcrEx(20, 500, 2000, 2000, "ffffff-303030", 0.7)
-                    # print(识别到的剩余兵力字符)
-                    #x, y = 寻找第一个非零x坐标(识别到的剩余兵力字符)
-                    #点击(x, y)
+
 
                     点击(x - 18, y - 21)
 

@@ -1,0 +1,108 @@
+name: 自动构建发布流程
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'  # 标准语义化版本
+      - 'v*-test'  # 明确包含test的标签
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+    # 1. 检出代码
+    - name: 检出代码库
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # 2. 配置Python环境
+    - name: 设置Python环境
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10.9'
+        cache: 'pip'
+
+    # 3. 安装依赖
+    - name: 安装项目依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install pywin32
+        pip install psutil
+        pip install pyinstaller
+
+    # 4. 执行构建
+    - name: 使用PyInstaller构建
+      shell: pwsh
+      run: |
+        pyinstaller --noconfirm "main.spec"
+        $files = Get-ChildItem dist -Recurse -File
+        echo "生成文件列表："
+        $files | Format-Table FullName
+        echo "总文件数: $($files.Count)"
+
+    # 5. 压缩构建结果
+    - name: 压缩发布文件
+      shell: pwsh
+      run: |
+        $version = "${{ github.ref_name }}".Replace("v","")
+        $zipName = "发布包_v${version}_$(Get-Date -Format 'yyyyMMdd').zip"
+        Compress-Archive -Path "./dist/*" -DestinationPath "./$zipName" -Force
+        echo "压缩包名称: $zipName"
+        echo "ZIP_PATH=$zipName" >> $env:GITHUB_ENV
+
+    # 生成当前时间字符串
+    - name: 生成构建时间
+      shell: pwsh
+      run: |
+        $时间 = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+        echo "BUILD_TIME=$时间" >> $env:GITHUB_ENV
+
+    # 新增步骤：获取上一个版本tag及提交日志
+    - name: 获取上一个版本Tag和提交日志
+      shell: bash
+      run: |
+        CURRENT_TAG=${GITHUB_REF#refs/tags/}
+        PREVIOUS_TAG=$(git tag --sort=-creatordate | grep -v "^${CURRENT_TAG}$" | head -n 1)
+
+        echo "当前版本: $CURRENT_TAG"
+        echo "上一个版本: $PREVIOUS_TAG"
+
+        if [ -z "$PREVIOUS_TAG" ]; then
+          LOGS=$(git log --oneline)
+        else
+          LOGS=$(git log --oneline ${PREVIOUS_TAG}..${CURRENT_TAG})
+        fi
+
+        # 转义换行符写入环境变量
+        LOGS_ESCAPED=$(echo "$LOGS" | sed ':a;N;$!ba;s/\n/\\n/g')
+
+        echo "CHANGELOG=$LOGS_ESCAPED" >> $GITHUB_ENV
+
+    # 6. 上传发布包，body中引用CHANGELOG
+    - name: 发布到GitHub
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: ${{ github.ref_name }}
+        name: "版本 ${{ github.ref_name }}"
+        body: |
+          构建于 ${{ env.BUILD_TIME }}
+
+          提交日志：
+          ${{ env.CHANGELOG }}
+        files: |
+          ${{ env.ZIP_PATH }}
+        draft: false
+        prerelease: ${{ contains(github.ref, 'test') || contains(github.ref, 'beta') }}
+
+    # 7. 清理工作区
+    - name: 清理工作空间
+      if: always()
+      run: |
+        Remove-Item -Recurse -Force build, dist, *.zip -ErrorAction SilentlyContinue
