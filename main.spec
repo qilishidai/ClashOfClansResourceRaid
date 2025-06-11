@@ -9,6 +9,8 @@ a = Analysis(
             ('img/*.*', 'img'),
             ('op-0.4.5_with_model/tools.dll', 'op-0.4.5_with_model/'),
             ('op-0.4.5_with_model/op_x64.dll', 'op-0.4.5_with_model/'),
+            ('op-0.4.5_with_model/paddle', 'op-0.4.5_with_model/paddle'),
+
     ],
     hiddenimports=[],
     hookspath=[],
